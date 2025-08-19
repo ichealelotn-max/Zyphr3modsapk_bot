@@ -11,7 +11,8 @@ CH2 = -1002742660499
 # 🔗 Links
 INSTAGRAM_LINK = "https://www.instagram.com/mods_zyphr3?igsh=MWN2cWRrcXk4cWt3Zg=="
 YOUTUBE_LINK = "https://youtube.com/@modszyphr3?si=Erx78UANHbOi9fvN"
-
+"📢 Telegram Channel 1: https://t.me/premiumapkmodsfile\n"
+"📢 Telegram Channel 2: https://t.me/+fyMHYwW3F6FiZTNl\n"
 # 📌 Join text
 JOIN_TEXT = (
     "👋 Welcome!\n"
@@ -42,7 +43,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"✅ Access granted!\n\n"
             f"📌 Instagram: {INSTAGRAM_LINK}\n"
             f"📌 YouTube: {YOUTUBE_LINK}\n\n"
-            "Enjoy bro 🎉"
+            "Enjoy bro🎉"
         )
     else:
         await update.message.reply_text(JOIN_TEXT)
