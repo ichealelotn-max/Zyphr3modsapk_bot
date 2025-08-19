@@ -1,37 +1,40 @@
-import os
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import Update
 from telegram.constants import ChatMemberStatus
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-# 🔑 BOT Token
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+# 🔑 Bot Token
+TOKEN = "8259299390:AAHpXdqWXbaxJoFhqSp2WSKEG_CPCLQqrr0"
 
-# 📌 Channels IDs (replace with your real IDs)
-CH1 = int(os.getenv("CHANNEL_ID_1", "-1003031873990"))  
-CH2 = int(os.getenv("CHANNEL_ID_2", "-1002742660499"))  
+# 📌 Channels
+CH1 = -1002742660499   # Channel 1 ID
+CH2 = -1003031873990   # Channel 2 ID
 
-# 🔗 Links
-INSTAGRAM_LINK = "https://www.instagram.com/mods_zyphr3?igsh=MWN2cWRrcXk4cWt3Zg=="
-YOUTUBE_LINK = "https://youtube.com/@modszyphr3?si=Erx78UANHbOi9fvN"
-CHANNEL_1_LINK = "https://t.me/premiumapkmodsfile"
-CHANNEL_2_LINK = "https://t.me/+fyMHYwW3F6FiZTNl"
+# 📌 Links
+CH1_LINK = "https://t.me/premiumapkmodsfile"
+CH2_LINK = "https://t.me/+fyMHYwW3F6FiZTNl"
+INSTAGRAM = "https://www.instagram.com/mods_zyphr3?igsh=MWN2cWRrcXk4cWt3Zg=="
+YOUTUBE = "https://youtube.com/@modszyphr3?si=Erx78UANHbOi9fvN"
+
+# 👨‍💻 Admins
+ADMINS = ["@Zyphr3", "@Sum48x"]
 
 JOIN_TEXT = (
-    "⚠️ Pehle dono channels join karo:\n\n"
-    f"👉 [Channel 1]({CHANNEL_1_LINK})\n"
-    f"👉 [Channel 2]({CHANNEL_2_LINK})\n\n"
-    "✅ Join karne ke baad /start dubara bhejo."
+    "👋 Welcome!\n"
+    "Please join BOTH channels first:\n"
+    f"1) {CH1_LINK}\n"
+    f"2) {CH2_LINK}\n\n"
+    "👉 Join karne ke baad /start dubara bhejo."
 )
 
 async def is_member(app, chat_id, user_id):
     try:
-        member = await app.bot.get_chat_member(chat_id, user_id)
-        return member.status in (
+        m = await app.bot.get_chat_member(chat_id, user_id)
+        return m.status in (
             ChatMemberStatus.MEMBER,
             ChatMemberStatus.ADMINISTRATOR,
             ChatMemberStatus.OWNER,
         )
-    except:
+    except Exception:
         return False
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -40,21 +43,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ok2 = await is_member(context.application, CH2, user_id)
 
     if ok1 and ok2:
-        keyboard = [
-            [InlineKeyboardButton("📸 Instagram", url=INSTAGRAM_LINK)],
-            [InlineKeyboardButton("▶️ YouTube", url=YOUTUBE_LINK)],
-            [InlineKeyboardButton("📂 Channel 1", url=CHANNEL_1_LINK)],
-            [InlineKeyboardButton("📂 Channel 2", url=CHANNEL_2_LINK)]
-        ]
-        await update.message.reply_text(
-            "🎉 Welcome! Sab links niche hain:",
-            reply_markup=InlineKeyboardMarkup(keyboard)
+        text = (
+            "✅ Access granted!\n\n"
+            f"📺 YouTube: {YOUTUBE}\n"
+            f"📷 Instagram: {INSTAGRAM}\n\n"
+            f"👨‍💻 Admins: {', '.join(ADMINS)}"
         )
+        await update.message.reply_text(text)
     else:
-        await update.message.reply_text(JOIN_TEXT, parse_mode="Markdown")
+        await update.message.reply_text(JOIN_TEXT)
 
 def main():
-    app = Application.builder().token(BOT_TOKEN).build()
+    app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.run_polling()
 
