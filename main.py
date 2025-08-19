@@ -1,36 +1,37 @@
 import os
-from telegram import Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ChatMemberStatus
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-# 🔑 Token aur channel IDs
-BOT_TOKEN = "8259299390:AAHpXdqWXbaxJoFhqSp2WSKEG_CPCLQqrr0"
-CH1 = -1003031873990
-CH2 = -1002742660499
+# 🔑 BOT Token
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+# 📌 Channels IDs (replace with your real IDs)
+CH1 = int(os.getenv("CHANNEL_ID_1", "-1003031873990"))  
+CH2 = int(os.getenv("CHANNEL_ID_2", "-1002742660499"))  
 
 # 🔗 Links
 INSTAGRAM_LINK = "https://www.instagram.com/mods_zyphr3?igsh=MWN2cWRrcXk4cWt3Zg=="
 YOUTUBE_LINK = "https://youtube.com/@modszyphr3?si=Erx78UANHbOi9fvN"
-"📢 Telegram Channel 1: https://t.me/premiumapkmodsfile\n"
-"📢 Telegram Channel 2: https://t.me/+fyMHYwW3F6FiZTNl\n"
-# 📌 Join text
+CHANNEL_1_LINK = "https://t.me/premiumapkmodsfile"
+CHANNEL_2_LINK = "https://t.me/+fyMHYwW3F6FiZTNl"
+
 JOIN_TEXT = (
-    "👋 Welcome!\n"
-    "Please join BOTH channels first:\n"
-    f"1) https://t.me/+fyMHYwW3F6FiZTNl\n"
-    f"2) https://t.me/premiumapkmodsfile\n\n"
-    "👉 Join karne ke baad /start dubara bhejo."
+    "⚠️ Pehle dono channels join karo:\n\n"
+    f"👉 [Channel 1]({CHANNEL_1_LINK})\n"
+    f"👉 [Channel 2]({CHANNEL_2_LINK})\n\n"
+    "✅ Join karne ke baad /start dubara bhejo."
 )
 
 async def is_member(app, chat_id, user_id):
     try:
-        m = await app.bot.get_chat_member(chat_id, user_id)
-        return m.status in (
+        member = await app.bot.get_chat_member(chat_id, user_id)
+        return member.status in (
             ChatMemberStatus.MEMBER,
             ChatMemberStatus.ADMINISTRATOR,
             ChatMemberStatus.OWNER,
         )
-    except Exception:
+    except:
         return False
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -39,14 +40,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ok2 = await is_member(context.application, CH2, user_id)
 
     if ok1 and ok2:
+        keyboard = [
+            [InlineKeyboardButton("📸 Instagram", url=INSTAGRAM_LINK)],
+            [InlineKeyboardButton("▶️ YouTube", url=YOUTUBE_LINK)],
+            [InlineKeyboardButton("📂 Channel 1", url=CHANNEL_1_LINK)],
+            [InlineKeyboardButton("📂 Channel 2", url=CHANNEL_2_LINK)]
+        ]
         await update.message.reply_text(
-            f"✅ Access granted!\n\n"
-            f"📌 Instagram: {INSTAGRAM_LINK}\n"
-            f"📌 YouTube: {YOUTUBE_LINK}\n\n"
-            "Enjoy bro🎉"
+            "🎉 Welcome! Sab links niche hain:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
         )
     else:
-        await update.message.reply_text(JOIN_TEXT)
+        await update.message.reply_text(JOIN_TEXT, parse_mode="Markdown")
 
 def main():
     app = Application.builder().token(BOT_TOKEN).build()
